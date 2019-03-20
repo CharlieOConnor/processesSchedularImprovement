@@ -16,7 +16,7 @@ public class Main {
 	public static void openCSV()
 	{
         priorityQueue<process> pq = new priorityQueue<process>();
-		System.out.println("\n|  Process ID  |  Arrival Time  |  Burst Time  |  Priority  |");
+		System.out.println("\n|  Process ID  |  Arrival Time  |  Burst Time  |  Priority  |\n");
 		/*
 		 * Open CSV file
 		 */

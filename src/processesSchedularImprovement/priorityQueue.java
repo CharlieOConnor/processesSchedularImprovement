@@ -55,9 +55,10 @@ public class priorityQueue<T> {
 			{       	  
 				while(currentNode.data.priority > temp.data.priority && temp.next != null) 
 				{
-					temp = temp.next;
+					temp = temp.next; //Use a temporary value to iterate through the queue
 				}
-				if (currentNode.data.priority <= temp.data.priority) //
+				//Keep iterating through the queue until the currentNode's priority is >= the temp's prioirity
+				if (currentNode.data.priority <= temp.data.priority) 
 				{
 					listNode storeNext = temp;
 					temp.previous.next = currentNode;
@@ -66,9 +67,10 @@ public class priorityQueue<T> {
 					currentNode.next = storeNext;
 					sort = true; //End add method
 				}
+				//If the currentNode's priority is greater than the tail, make it the new tail
 				if (currentNode.data.priority > temp.data.priority && sort != true)
 				{
-					//tail.next = currentNode;
+					tail.next = currentNode;
 					currentNode.previous = tail;
 					currentNode.next = null;
 					tail = currentNode;
@@ -79,6 +81,7 @@ public class priorityQueue<T> {
 		length++;
 	}
 	
+	//Iterate through the queue and print the processes one by one until it's empty
 	public void printQueue()
 	{	
 		if (head == null)
