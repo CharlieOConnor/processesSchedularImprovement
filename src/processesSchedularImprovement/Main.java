@@ -10,7 +10,9 @@ public class Main {
 
 	public static void main(String args[])
 	{
+		progressBars bars = new progressBars();
 		openCSV();
+		bars.showBars();
 	}
 
 	public static void openCSV()
@@ -37,10 +39,11 @@ public class Main {
 				  pq.add(new process(processID, arrivalTime, burstTime, priority));
 				  
 				 
-				//System.out.printf("%9s %15s %15s %13s %n", processID, arrivalTime, burstTime, priority); 
+				System.out.printf("%9s %15s %15s %13s %n", processID, arrivalTime, burstTime, priority); 
 
 			}
 			inputStream.close();
+			System.out.println("\nProcesses ordered by priority\n");
 			pq.printQueue();
 
 		} 

@@ -93,7 +93,8 @@ public class priorityQueue<T> {
 		
 		while(temp != null)
 		{
-			System.out.println(temp.data);
+			System.out.printf("%9s %15s %15s %13s %n", temp.data.processID, temp.data.arrivalTime, temp.data.burstTime, temp.data.priority);
+			//System.out.println(temp.data);
 			temp = temp.next;
 		}		
 		length--;
