@@ -10,8 +10,9 @@ public class Main {
 
 	public static void main(String args[])
 	{
-		progressBars bars = new progressBars();
 		openCSV();
+		
+		progressBars bars = new progressBars();	
 		bars.showBars();
 	}
 
