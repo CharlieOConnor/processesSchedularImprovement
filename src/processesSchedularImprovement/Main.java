@@ -4,7 +4,7 @@ import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-/** Proposed solution with a priority queue scheduling program*/
+/** Proposed solution with a multi-level queue scheduling program*/
 
 public class Main {
 
@@ -12,13 +12,22 @@ public class Main {
 	{
 		openCSV();
 		
-		progressBars bars = new progressBars();	
-		bars.showBars();
+		//progressBars bars = new progressBars();	
+		//bars.showBars();
 	}
+
+	 /*-------------------------------------------------------
+	  * To Do: remove other queues and use a placeholder queue to hold the variables 
+	  * and allocate them accordingly to other queues based on the chosen sorting algorithms
+	  */
 
 	public static void openCSV()
 	{
-        priorityQueue<process> pq = new priorityQueue<process>();
+        pQueue<Process> high = new pQueue<Process>();
+        pQueue<Process> medium = new pQueue<Process>();
+        pQueue<Process> low = new pQueue<Process>();
+        
+        
 		System.out.println("\n|  Process ID  |  Arrival Time  |  Burst Time  |  Priority  |\n");
 		/*
 		 * Open CSV file
@@ -37,34 +46,44 @@ public class Main {
 				  int burstTime    = Integer.parseInt(details[2]);
 				  int priority     = Integer.parseInt(details[3]);
 				  
-				  pq.add(new process(processID, arrivalTime, burstTime, priority));
-				  
-				 
-				System.out.printf("%9s %15s %15s %13s %n", processID, arrivalTime, burstTime, priority); 
-
+				  /*
+				   * 
+				   * 
+				   * 
+				   * Change the queue names to correspond  to the algorithms in the SchedulingAlgorithms class
+				   * 
+				   * 
+				   * 
+				   */
+				  if (priority == 1)
+				  {
+				    high.add(new Process(processID, arrivalTime, burstTime, priority));
+				  }
+				  else if (priority == 2)
+				  {
+				    medium.add(new Process(processID, arrivalTime, burstTime, priority));
+				  }
+				  else 
+				  {
+					low.add(new Process(processID, arrivalTime, burstTime, priority));
+				  }
 			}
 			inputStream.close();
-			System.out.println("\nProcesses ordered by priority\n");
-			pq.printQueue();
-
+			
+			// Side project to check if it's possible to print progress bars alongside an executing process in the console
+			/*
+			 * for (int i = 0; i< high.length; i++) { for( int j = 0; j<
+			 * Process.data.getBurstTime(); j++) {
+			 * 
+			 * } }
+			 */
+			high.printQueue();
+			medium.printQueue();
+			low.printQueue();
 		} 
 		catch (FileNotFoundException e) 
 		{
 			e.printStackTrace();
 		}
 	}
-
-	public static void processInformation(String processID[], int n,
-			int burstTime[], int priority[])
-	{
-		/*
-		 * Make a copy of burstTimes[] to store remaining burst times
-		 */
-		int rem_burstTime[] = new int[n];
-		for (int i = 0; i < n; i++)
-		{
-			rem_burstTime[i] = burstTime[i];
-		}		    
-	}
-
 }

@@ -52,30 +52,30 @@ public class progressBars {
 		b9.setValue(0); b9.setStringPainted(true); b9.setForeground(Color.black);
 
 		// add progress bars
-		p.add(Box.createRigidArea(new Dimension(0, 20)));
+		p.add(Box.createRigidArea(new Dimension(0, 60)));
 		p.add(b1); 
-		p.add(Box.createRigidArea(new Dimension(0, 20)));
+		p.add(Box.createRigidArea(new Dimension(0, 60)));
 		p.add(b2);	
-		p.add(Box.createRigidArea(new Dimension(0, 20)));
+		p.add(Box.createRigidArea(new Dimension(0, 60)));
 		p.add(b3);
-		p.add(Box.createRigidArea(new Dimension(0, 20)));
+		p.add(Box.createRigidArea(new Dimension(0, 60)));
 		p.add(b4);
-		p.add(Box.createRigidArea(new Dimension(0, 20)));
+		p.add(Box.createRigidArea(new Dimension(0, 60)));
 		p.add(b5);
-		p.add(Box.createRigidArea(new Dimension(0, 20)));
+		p.add(Box.createRigidArea(new Dimension(0, 60)));
 		p.add(b6);
-		p.add(Box.createRigidArea(new Dimension(0, 20)));
+		p.add(Box.createRigidArea(new Dimension(0, 60)));
 		p.add(b7);
-		p.add(Box.createRigidArea(new Dimension(0, 20)));
+		p.add(Box.createRigidArea(new Dimension(0, 60)));
 		p.add(b8);
-		p.add(Box.createRigidArea(new Dimension(0, 20)));
+		p.add(Box.createRigidArea(new Dimension(0, 60)));
 		p.add(b9);
 
 		// add panel
 		f.add(p);
 
 		// set the size of the frame
-		f.setSize(500, 500);
+		f.setSize(500, 1000);
 		f.setVisible(true);
 
 		fill1();	
