@@ -1,12 +1,18 @@
 package processesSchedularImprovement;
 
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 import java.io.File;
 import java.io.FileNotFoundException;
 
 /** Proposed solution with a multi-level queue scheduling program*/
 
 public class Main {
+	
+	public static List<Process> fcfsList = new ArrayList<Process>();
+	public static List<Process> sjfList  = new ArrayList<Process>();
+	public static List<Process> rrList   = new ArrayList<Process>();
 
 	public static void main(String args[])
 	{
@@ -19,14 +25,14 @@ public class Main {
 	 /*-------------------------------------------------------
 	  * To Do: remove other queues and use a placeholder queue to hold the variables 
 	  * and allocate them accordingly to other queues based on the chosen sorting algorithms
+	  * ------------------------------------------------------
 	  */
 
 	public static void openCSV()
 	{
-        pQueue<Process> high = new pQueue<Process>();
-        pQueue<Process> medium = new pQueue<Process>();
-        pQueue<Process> low = new pQueue<Process>();
-        
+//        pQueue<Process> high = new pQueue<Process>();
+//        pQueue<Process> medium = new pQueue<Process>();
+//        pQueue<Process> low = new pQueue<Process>();
         
 		System.out.println("\n|  Process ID  |  Arrival Time  |  Burst Time  |  Priority  |\n");
 		/*
@@ -46,6 +52,20 @@ public class Main {
 				  int burstTime    = Integer.parseInt(details[2]);
 				  int priority     = Integer.parseInt(details[3]);
 				  
+				  if (priority == 1)
+				  {
+					  fcfsList.add(new Process(processID, arrivalTime, burstTime, priority));
+				  }
+				  
+				  if (priority == 2)
+				  {
+					  sjfList.add(new Process(processID, arrivalTime, burstTime, priority));
+				  }
+				  else
+				  {
+					  rrList.add(new Process(processID, arrivalTime, burstTime, priority));
+				  }
+				  
 				  /*
 				   * 
 				   * 
@@ -55,31 +75,40 @@ public class Main {
 				   * 
 				   * 
 				   */
-				  if (priority == 1)
-				  {
-				    high.add(new Process(processID, arrivalTime, burstTime, priority));
-				  }
-				  else if (priority == 2)
-				  {
-				    medium.add(new Process(processID, arrivalTime, burstTime, priority));
-				  }
-				  else 
-				  {
-					low.add(new Process(processID, arrivalTime, burstTime, priority));
-				  }
+//				  if (priority == 1)
+//				  {
+//				    high.add(new Process(processID, arrivalTime, burstTime, priority));
+//				  }
+//				  else if (priority == 2)
+//				  {
+//				    medium.add(new Process(processID, arrivalTime, burstTime, priority));
+//				  }
+//				  else 
+//				  {
+//					low.add(new Process(processID, arrivalTime, burstTime, priority));
+//				  }
 			}
 			inputStream.close();
 			
+		    FCFS fcfs = new FCFS(fcfsList);
+		    SJF  sjf  = new SJF(sjfList);
+		    RR   rr   = new RR(rrList);
+		    
+		    fcfs.print();
+		    sjf.print();
+		    rr.print();
+			
 			// Side project to check if it's possible to print progress bars alongside an executing process in the console
-			/*
-			 * for (int i = 0; i< high.length; i++) { for( int j = 0; j<
-			 * Process.data.getBurstTime(); j++) {
-			 * 
-			 * } }
-			 */
-			high.printQueue();
-			medium.printQueue();
-			low.printQueue();
+//			for (int i = 0; i< high.length; i++)
+//			{
+//				for( int j = 0; j< Process.data.getBurstTime(); j++)
+//				{
+//					
+//				}
+//			}
+//			high.printQueue();
+//			medium.printQueue();
+//			low.printQueue();
 		} 
 		catch (FileNotFoundException e) 
 		{

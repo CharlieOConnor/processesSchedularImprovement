@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/* FCFS inherits from the class *Main, so that processes entered
- * can be alloted to this algorithm if it is called
+/* FCFS inherits from the class *Main, so that the processes entered
+ * can be alloted to the queue using this algorithm if it is called
  */
 public class FCFS extends Scheduler
 {
@@ -23,7 +23,7 @@ public class FCFS extends Scheduler
 		int waitingTime        = 0;
 	
 		int amountOfProcesses  = process.size(); 
-		int arrivalProcess     = firstArrival(process);
+		int arrivalProcess     = arrivalMin(process);
 		
 		for (Process p: FCFSList)
 		{
@@ -42,6 +42,11 @@ public class FCFS extends Scheduler
 	
 	public void print()
 	{
-		super.print("FCFS");
+		 for (Process p: FCFSList)
+		 {
+		 System.out.printf("%9s %15s %15s %13s %n", p.processID, p.arrivalTime, p.burstTime, p.priority);
+		 }
+		//Print out some of the averages for the FCFS algorithm
+		//super.print("FCFS");
 	}
 }

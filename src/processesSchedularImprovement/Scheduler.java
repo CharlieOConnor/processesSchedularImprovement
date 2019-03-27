@@ -65,12 +65,12 @@ public class Scheduler {
 		this.avgResponseTime = avgResponseTime;
 	}
 	
-	public int getNumberOfProcesses(List<Process> process)
+	public int getAmountOfProcesses(List<Process> process)
 	{
 		return process.size();
 	}
 	
-	public int firstArrival(List<Process> process)
+	public int arrivalMin(List<Process> process)
 	{
 		int first = process.get(0).getArrivalTime();
 		for (Process p : process)
@@ -83,9 +83,13 @@ public class Scheduler {
 		return first;
 	}
 	
+	/*
+	 * When print is called in Main, this is what will be printed
+	 * Variables currently set to 0
+	 */
 	public void print(String schedulerType)
 	{
-		System.out.println(schedulerType + getAvgTurnaroundTime() + getAvgWaitingTime() + getAvgResponseTime());
+		System.out.println(schedulerType + " " + getAvgTurnaroundTime() + " " + getAvgWaitingTime() + " " + getAvgResponseTime());
 	}
 	
 	/*

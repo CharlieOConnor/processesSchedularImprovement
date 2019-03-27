@@ -14,16 +14,17 @@ public class Process implements Comparable<Process> {
 	 */
 	public Process(String processID, int arrivalTime, int burstTime, int priority)
 	{
-		this.processID = processID;
+		this.processID   = processID;
 		this.arrivalTime = arrivalTime;
-		this.burstTime = burstTime;
-		this.priority = priority;
+		this.burstTime   = burstTime;
+		this.priority    = priority;
 	}
 	
-	public String toString()
-	{
-		return processID + " " + arrivalTime + " " + burstTime + " " + priority;
-	}
+	// Not sure if needed
+//	public String toString()
+//	{
+//		return processID + " " + arrivalTime + " " + burstTime + " " + priority;
+//	}
 	
 	public String getProcessID()
 	{
@@ -43,6 +44,11 @@ public class Process implements Comparable<Process> {
 	public int getPriority()
 	{
 		return priority;
+	}
+	
+	public int getRemainingBurstTime()
+	{
+		return remainingBurstTime;
 	}
 	
 	public void setRemainingBurstTime(int burstTime)
