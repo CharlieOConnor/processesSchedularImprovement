@@ -1,23 +1,27 @@
 package processesSchedularImprovement;
 
-public class Process implements Comparable<Process> {
+import java.util.Comparator;
 
-	String processID;
+public class Process implements Comparator<Process> {
+
+	int processID;
 	int arrivalTime;
     int burstTime;
 	int priority;
 	
 	int remainingBurstTime;
+    String progressBar; // A special variable needed to hold the current progress of each process
 	
 	/*
 	 * Create instance of the process class to hold data on the individual processes
 	 */
-	public Process(String processID, int arrivalTime, int burstTime, int priority)
+	public Process(int processID, int arrivalTime, int burstTime, int priority, String progressBar)
 	{
 		this.processID   = processID;
 		this.arrivalTime = arrivalTime;
 		this.burstTime   = burstTime;
 		this.priority    = priority;
+		this.progressBar = progressBar;
 	}
 	
 	// Not sure if needed
@@ -26,7 +30,7 @@ public class Process implements Comparable<Process> {
 //		return processID + " " + arrivalTime + " " + burstTime + " " + priority;
 //	}
 	
-	public String getProcessID()
+	public int getProcessID()
 	{
 		return processID;
 	}
@@ -57,7 +61,15 @@ public class Process implements Comparable<Process> {
 	}
 
 	@Override
-	public int compareTo(Process o) {
+	public int compare(Process arg0, Process arg1) {
+		if (arg0.getBurstTime() < arg1.getBurstTime()) 
+		{		
+			return 1;
+		}
+		else if ( arg0.getBurstTime() > arg1.getBurstTime())
+		{
+			return -1;
+		}
 		// TODO Auto-generated method stub
 		return 0;
 	}

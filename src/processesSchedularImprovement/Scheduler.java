@@ -2,7 +2,7 @@ package processesSchedularImprovement;
 
 import java.util.List;
 
-public class Scheduler {
+public class Scheduler extends Main {
 
 	private double cpuUtilization    = 0;
 	private double throughput        = 0;

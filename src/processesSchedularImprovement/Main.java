@@ -6,35 +6,31 @@ import java.util.List;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-/** Proposed solution with a multi-level queue scheduling program*/
+/** Proposed solution with a multi-level queue scheduling program */
 
 public class Main {
-	
+
 	public static List<Process> fcfsList = new ArrayList<Process>();
 	public static List<Process> sjfList  = new ArrayList<Process>();
 	public static List<Process> rrList   = new ArrayList<Process>();
+	
+	static int i = 0;
+	
+	// The maximum value for the seconds counter
+	static int totalBurstTime;
 
-	public static void main(String args[])
-	{
-		openCSV();
-		
+	public static void main(String args[]) throws InterruptedException {
+	 	openCSV();
+
 		//progressBars bars = new progressBars();	
 		//bars.showBars();
 	}
 
-	 /*-------------------------------------------------------
-	  * To Do: remove other queues and use a placeholder queue to hold the variables 
-	  * and allocate them accordingly to other queues based on the chosen sorting algorithms
-	  * ------------------------------------------------------
-	  */
-
-	public static void openCSV()
-	{
-//        pQueue<Process> high = new pQueue<Process>();
-//        pQueue<Process> medium = new pQueue<Process>();
-//        pQueue<Process> low = new pQueue<Process>();
-        
-		System.out.println("\n|  Process ID  |  Arrival Time  |  Burst Time  |  Priority  |\n");
+	public static void openCSV() throws InterruptedException {
+		//        pQueue<Process> high = new pQueue<Process>();
+		//        pQueue<Process> medium = new pQueue<Process>();
+		//        pQueue<Process> low = new pQueue<Process>();
+		
 		/*
 		 * Open CSV file
 		 */
@@ -42,77 +38,84 @@ public class Main {
 		File file = new File(fileName); //Read in the file
 		try {
 			Scanner inputStream = new Scanner(file);
-			while (inputStream.hasNext())
-			{
+			while (inputStream.hasNext()) {
 				String data = inputStream.nextLine(); //Currently reads in the entire line
 				String[] details = data.split(",");
-				  
-				  String processID = details[0]; 
-				  int arrivalTime  = Integer.parseInt(details[1]); 
-				  int burstTime    = Integer.parseInt(details[2]);
-				  int priority     = Integer.parseInt(details[3]);
-				  
-				  if (priority == 1)
-				  {
-					  fcfsList.add(new Process(processID, arrivalTime, burstTime, priority));
-				  }
-				  
-				  if (priority == 2)
-				  {
-					  sjfList.add(new Process(processID, arrivalTime, burstTime, priority));
-				  }
-				  else
-				  {
-					  rrList.add(new Process(processID, arrivalTime, burstTime, priority));
-				  }
-				  
-				  /*
-				   * 
-				   * 
-				   * 
-				   * Change the queue names to correspond  to the algorithms in the SchedulingAlgorithms class
-				   * 
-				   * 
-				   * 
-				   */
-//				  if (priority == 1)
-//				  {
-//				    high.add(new Process(processID, arrivalTime, burstTime, priority));
-//				  }
-//				  else if (priority == 2)
-//				  {
-//				    medium.add(new Process(processID, arrivalTime, burstTime, priority));
-//				  }
-//				  else 
-//				  {
-//					low.add(new Process(processID, arrivalTime, burstTime, priority));
-//				  }
+
+				//String processID = details[0]; 
+				int processID    = Integer.parseInt(details[0]);
+				int arrivalTime  = Integer.parseInt(details[1]); 
+				int burstTime    = Integer.parseInt(details[2]);
+				int priority     = Integer.parseInt(details[3]);
+				String progressBar = "";
+				
+				totalBurstTime += burstTime;
+
+				if (priority == 1) {
+					fcfsList.add(new Process(processID, arrivalTime, burstTime, priority, progressBar));
+				}
+
+				else if (priority == 2) {
+					sjfList.add(new Process(processID, arrivalTime, burstTime, priority, progressBar));
+				}
+				else {
+					rrList.add(new Process(processID, arrivalTime, burstTime, priority, progressBar));
+				}
 			}
-			inputStream.close();
 			
-		    FCFS fcfs = new FCFS(fcfsList);
-		    SJF  sjf  = new SJF(sjfList);
-		    RR   rr   = new RR(rrList);
-		    
-		    fcfs.print();
-		    sjf.print();
-		    rr.print();
+			inputStream.close();
+
+
+//			// Loop printing of output every second
+//			for(int i = 0; i<totalBurstTime-1; i++) {
+//				Thread.sleep(1000);
+//				System.out.println("\n-----------------------\nSeconds Elapsed: " + i);
+//				System.out.println("--------------------------------------------------------------------------");
+//				System.out.println("|  Process ID  |  Arrival Time  |  Burst Time  |  Priority  |  Progress  \n");
+//				fcfs.print();
+//				//sjf.print();
+//				//rr.print();
+//			}
+//			
+			//fcfs.print();
+			//sjf.print();
+			//rr.print();
+			
+			printLoop();
 			
 			// Side project to check if it's possible to print progress bars alongside an executing process in the console
-//			for (int i = 0; i< high.length; i++)
-//			{
-//				for( int j = 0; j< Process.data.getBurstTime(); j++)
-//				{
-//					
-//				}
-//			}
-//			high.printQueue();
-//			medium.printQueue();
-//			low.printQueue();
-		} 
-		catch (FileNotFoundException e) 
-		{
+			//			for (int i = 0; i< high.length; i++)
+			//			{
+			//				for( int j = 0; j< Process.data.getBurstTime(); j++)
+			//				{
+			//					
+			//				}
+			//			}
+			//			high.printQueue();
+			//			medium.printQueue();
+			//			low.printQueue();
+		}
+		catch (FileNotFoundException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public static void printLoop() throws InterruptedException {
+		
+		FCFS fcfs = new FCFS(fcfsList);
+		SJF  sjf  = new SJF(sjfList);
+		RR   rr   = new RR(rrList);
+		// Loop printing of output every second
+		while(i < totalBurstTime-1) {
+			Thread.sleep(1000);
+			System.out.println("\n-----------------------\nSeconds Elapsed: " + i);
+			System.out.println("--------------------------------------------------------------------------");
+			System.out.println("|  Process ID  |  Arrival Time  |  Burst Time  |  Priority  |  Progress  \n");
+			i++;
+			fcfs.print();
+			sjf.print();
+			//rr.print();
+			
 		}
 	}
 }
