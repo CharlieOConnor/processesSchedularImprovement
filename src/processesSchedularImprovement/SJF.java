@@ -48,15 +48,16 @@ public class SJF extends Scheduler {
 	
 	public SJF(List<Process> process)
 	{
-		SJFList               = new ArrayList<Process>(process);
-		
+		SJFList               = new ArrayList<Process>(process);		
 		int returnTime        = 0;
 		int responseTime      = 0;
 		int waitingTime       = 0;
+		
 		int totalProcesses    = super.getAmountOfProcesses(process);
 		int arrivalProcess    = arrivalMin(process);
 		
 		//prepareList(process);
+		// Sort list by burst time (from low to high)
 		SJFList.sort(Comparator.comparing(Process::getBurstTime));
 		
 		//While there are processes
@@ -74,20 +75,30 @@ public class SJF extends Scheduler {
 		super.setAvgWaitingTime((double) waitingTime / totalProcesses);
 	}
 	
-	public void print() throws InterruptedException {
+	// Print out Shortest Job First list
+	public void print() throws InterruptedException	{
 		
 		for (Process p: SJFList) {
 			System.out.printf("%9s %15s %15s %13s", p.processID, p.arrivalTime, p.burstTime, p.priority, p.progressBar);
 			System.out.print("          ");
-			while(p.burstTime != 0) {
+			
+			if (Main.i == 0) {
+				Main.i++;
 				p.progressBar += "|";
-				System.out.print(p.progressBar);
 				p.burstTime--;
-			    Main.printLoop();		
+				Main.printQueues();
+			}
+			
+			while(p.burstTime != 0) {
+				System.out.print(p.progressBar);
+				p.progressBar += "|";
+				Main.i++;
+				p.burstTime--;
+			    Main.printQueues();	
 			}
 			System.out.print(p.progressBar + " Done\n");
-		 }		
-		//Print out some of the averages for the RR algorithm
-		//super.print("SJF");
+		}
+		//Print out some of the averages for the FCFS algorithm
+		//super.print("FCFS");
 	}
 }

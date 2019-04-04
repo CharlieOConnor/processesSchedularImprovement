@@ -51,22 +51,32 @@ public class FCFS extends Scheduler {
 
 	}
 
+	// Print out First Come First Served list
 	public void print() throws InterruptedException	{
 		
 		for (Process p: FCFSList) {
 			System.out.printf("%9s %15s %15s %13s", p.processID, p.arrivalTime, p.burstTime, p.priority, p.progressBar);
 			System.out.print("          ");
-			while(p.burstTime != 0) {
+			
+			if (Main.i == 0) {
+				Main.i++;
 				p.progressBar += "|";
+				p.burstTime--;
+				Main.printQueues();
+			}
+			
+			while(p.burstTime != 0) {
+				System.out.print(p.progressBar);
+				p.progressBar += "|";
+				Main.i++;
+				p.burstTime--;
+			    Main.printQueues();	
 				//if(arrayOfArrays.size() >= 1) {
 				//System.out.print(result2.replace("[","").replace("]",""));
 				//System.out.print(arrayOfArrays);
 				//}
-				//System.out.print(result.replaceAll(",","").replace("[","").replace("]",""));		
-				System.out.print(p.progressBar);
-				//System.out.print("|");
-				p.burstTime--;
-			    Main.printLoop();		
+				//System.out.print(result.replaceAll(",","").replace("[","").replace("]",""));					
+				//System.out.print("|");	
 			}
 			System.out.print(p.progressBar + " Done\n");
 			//arrayOfArrays.add(progressBar);

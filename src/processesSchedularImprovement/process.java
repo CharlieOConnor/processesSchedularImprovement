@@ -9,19 +9,20 @@ public class Process implements Comparator<Process> {
     int burstTime;
 	int priority;
 	
-	int remainingBurstTime;
-    String progressBar; // A special variable needed to hold the current progress of each process
-	
+	int remainingBurstTime;  
+    String progressBar;      // --> Additional variables added to the process
+    int waitingTime;         //
 	/*
 	 * Create instance of the process class to hold data on the individual processes
 	 */
-	public Process(int processID, int arrivalTime, int burstTime, int priority, String progressBar)
+	public Process(int processID, int arrivalTime, int burstTime, int priority, String progressBar, int waitingTime)
 	{
 		this.processID   = processID;
 		this.arrivalTime = arrivalTime;
 		this.burstTime   = burstTime;
 		this.priority    = priority;
 		this.progressBar = progressBar;
+		this.waitingTime = waitingTime;
 	}
 	
 	// Not sure if needed
@@ -50,6 +51,11 @@ public class Process implements Comparator<Process> {
 		return priority;
 	}
 	
+	public int getWaitingTime()
+	{	
+		return waitingTime;
+	}
+	
 	public int getRemainingBurstTime()
 	{
 		return remainingBurstTime;
@@ -60,17 +66,15 @@ public class Process implements Comparator<Process> {
 		this.remainingBurstTime = remainingBurstTime;
 	}
 
+	// Implement comparator in order to sort the processes in the SJF list
 	@Override
 	public int compare(Process arg0, Process arg1) {
-		if (arg0.getBurstTime() < arg1.getBurstTime()) 
-		{		
+		if (arg0.getBurstTime() < arg1.getBurstTime()) {		
 			return 1;
 		}
-		else if ( arg0.getBurstTime() > arg1.getBurstTime())
-		{
+		else if ( arg0.getBurstTime() > arg1.getBurstTime()) {
 			return -1;
 		}
-		// TODO Auto-generated method stub
 		return 0;
 	}
 }

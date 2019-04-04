@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
 
 /** Proposed solution with a multi-level queue scheduling program */
 
-public class Main {
+public class Main  {
 
 	public static List<Process> fcfsList = new ArrayList<Process>();
 	public static List<Process> sjfList  = new ArrayList<Process>();
@@ -20,6 +20,7 @@ public class Main {
 	static int totalBurstTime;
 
 	public static void main(String args[]) throws InterruptedException {
+		
 	 	openCSV();
 
 		//progressBars bars = new progressBars();	
@@ -48,18 +49,19 @@ public class Main {
 				int burstTime    = Integer.parseInt(details[2]);
 				int priority     = Integer.parseInt(details[3]);
 				String progressBar = "";
+				int waitingTime = 0;
 				
 				totalBurstTime += burstTime;
 
 				if (priority == 1) {
-					fcfsList.add(new Process(processID, arrivalTime, burstTime, priority, progressBar));
+					fcfsList.add(new Process(processID, arrivalTime, burstTime, priority, progressBar, waitingTime));
 				}
 
 				else if (priority == 2) {
-					sjfList.add(new Process(processID, arrivalTime, burstTime, priority, progressBar));
+					sjfList.add(new Process(processID, arrivalTime, burstTime, priority, progressBar, waitingTime));
 				}
 				else {
-					rrList.add(new Process(processID, arrivalTime, burstTime, priority, progressBar));
+					rrList.add(new Process(processID, arrivalTime, burstTime, priority, progressBar, waitingTime));
 				}
 			}
 			
@@ -81,7 +83,7 @@ public class Main {
 			//sjf.print();
 			//rr.print();
 			
-			printLoop();
+			printQueues();
 			
 			// Side project to check if it's possible to print progress bars alongside an executing process in the console
 			//			for (int i = 0; i< high.length; i++)
@@ -100,22 +102,22 @@ public class Main {
 		}
 	}
 	
-	public static void printLoop() throws InterruptedException {
+	// Print out the contents of all the queues
+	public static void printQueues() throws InterruptedException {
 		
 		FCFS fcfs = new FCFS(fcfsList);
 		SJF  sjf  = new SJF(sjfList);
 		RR   rr   = new RR(rrList);
+
 		// Loop printing of output every second
-		while(i < totalBurstTime-1) {
+		while(i < totalBurstTime +1) {
 			Thread.sleep(1000);
 			System.out.println("\n-----------------------\nSeconds Elapsed: " + i);
 			System.out.println("--------------------------------------------------------------------------");
 			System.out.println("|  Process ID  |  Arrival Time  |  Burst Time  |  Priority  |  Progress  \n");
-			i++;
 			fcfs.print();
 			sjf.print();
-			//rr.print();
-			
+			rr.print();	
 		}
 	}
 }
