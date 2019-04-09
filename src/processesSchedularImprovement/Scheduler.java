@@ -9,12 +9,8 @@ public class Scheduler {
 	private double avgTurnaroundTime = 0;
 	private double avgWaitingTime    = 0;
 	private double avgResponseTime   = 0;
-	/*
-	 * private double turnaroundTime = 0; 
-	 * private double waitingTime = 0; 
-	 * private double responseTime = 0;
-	 */
 	
+
 	public double getCpuUtilization()
 	{
 		return cpuUtilization;
@@ -69,34 +65,5 @@ public class Scheduler {
 	{
 		return process.size();
 	}
-	
-	public int arrivalMin(List<Process> process)
-	{
-		int first = process.get(0).getArrivalTime();
-		for (Process p : process)
-		{
-			if(p.getArrivalTime() < first)
-			{
-				first = p.getArrivalTime();
-			}
-		}
-		return first;
-	}
-	
-	/*
-	 * When print is called in Main, this is what will be printed
-	 * Variables currently set to 0
-	 */
-	public void print(String schedulerType)
-	{
-		System.out.println(schedulerType + " " + getAvgTurnaroundTime() + " " + getAvgWaitingTime() + " " + getAvgResponseTime());
-	}
-	
-	/*
-	 * public double getTurnaroundTime() { return turnaroundTime; }
-	 * 
-	 * public double getWaitingTime() { return waitingTime; }
-	 * 
-	 * public double getResponseTime() { return responseTime; }
-	 */
 }
+	

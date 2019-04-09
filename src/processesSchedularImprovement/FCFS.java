@@ -4,90 +4,61 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+public class FCFS {
 
-/* FCFS inherits from the class *Main, so that the processes entered
- * can be alloted to the queue using this algorithm if it is called
- */
-public class FCFS extends Scheduler {
+	// Multiple queues depending on the arrival time and remaining burst time of each process
+	public  static ArrayList<Process> tempQueue     = new ArrayList<Process>();
+	public  static ArrayList<Process> waitingQueue  = new ArrayList<Process>();
+	public  static ArrayList<Process> readyQueue    = new ArrayList<Process>();
+	public  static ArrayList<Process> finishedQueue = new ArrayList<Process>();
 
-	private static List<Process> FCFSList;       
-	
-	//An array of arrays to hold each progress bar
-	//private static List<List<String>> arrayOfArrays = new ArrayList<>();
-	//private static List<String> progressBar = new ArrayList<String>();
-	
-	//For getting rid of spaces and brackets between array elements
-	//String result  = progressBar.toString();
-	//String result2 = arrayOfArrays.toString();
-	
 
-	/* A constructor is used to initialise default values
-	 * for other variables attached to the algorithm
-	 */
+	// Sort all processes entered into this queue from the CSV file by arrival time
 	public FCFS(List<Process> process) {
-		
-		FCFSList               = new ArrayList<Process>(process);
-		int returnTime         = 0;
-		int responseTime       = 0;
-		int waitingTime        = 0;
 
-		int amountOfProcesses  = process.size(); 
-		int arrivalProcess     = arrivalMin(process);
-		
+		tempQueue              = new ArrayList<Process>(process);
+
 		// Sort processes based on their arrival time into the system
-		FCFSList.sort(Comparator.comparing(Process::getArrivalTime));
-
-		for (Process p: FCFSList) {
-			arrivalProcess += p.getBurstTime();
-			returnTime     += (arrivalProcess - p.getArrivalTime());
-			waitingTime    += (arrivalProcess - p.getArrivalTime() - p.getBurstTime());
-		}
-
-		responseTime = waitingTime;
-
-		super.setAvgTurnaroundTime((double) returnTime / amountOfProcesses);
-		super.setAvgResponseTime((double) responseTime / amountOfProcesses);
-		super.setAvgWaitingTime((double) waitingTime / amountOfProcesses);
-
+		tempQueue.sort(Comparator.comparing(Process::getArrivalTime));
 	}
 
-	// Print out First Come First Served list
+	// Print out First-Come-First-Served list
 	public void print() throws InterruptedException	{
-		
-		for (Process p: FCFSList) {
+
+		// First print out all the processes with no remaining burst time
+		for (Process p: finishedQueue) {
 			System.out.printf("%9s %15s %15s %13s", p.processID, p.arrivalTime, p.burstTime, p.priority, p.progressBar);
 			System.out.print("          ");
-			
-			if (Main.i == 0) {
-				Main.i++;
-				p.progressBar += "|";
-				p.burstTime--;
-				Main.printQueues();
-			}
-			
-			while(p.burstTime != 0) {
+			System.out.print(p.progressBar + " Done\n");
+		}
+		
+		// If the CPU doesn't have anything to execute at the moment, increment totalWaitingTime
+		if(waitingQueue.size() == 0 && readyQueue.size() == 0) {
+			openCSV.totalWaitingTime++;
+		}
+
+		// Then print out the process currently executing
+		for (Process p: readyQueue) {
+			System.out.printf("%9s %15s %15s %13s", p.processID, p.arrivalTime, p.burstTime, p.priority, p.progressBar);
+			System.out.print("          ");
+
+			while (p.burstTime != 0) {
+				openCSV.currentTime++;
 				System.out.print(p.progressBar);
 				p.progressBar += "|";
-				Main.i++;
 				p.burstTime--;
-			    Main.printQueues();	
-				//if(arrayOfArrays.size() >= 1) {
-				//System.out.print(result2.replace("[","").replace("]",""));
-				//System.out.print(arrayOfArrays);
-				//}
-				//System.out.print(result.replaceAll(",","").replace("[","").replace("]",""));					
-				//System.out.print("|");	
+				openCSV.printQueues();					    		    
 			}
-			System.out.print(p.progressBar + " Done\n");
-			//arrayOfArrays.add(progressBar);
-			//System.out.print(arrayOfArrays + " Done\n");
-			//System.out.print(result2.replaceAll(", ","").replace("[","").replace("]","") +" Done\n");
-			//System.out.print(result.replaceAll(",","").replace("[","").replace("]","") + " Done\n");
-			
-			//Constantly being cleared with each new addition because
-			// the first process's burst time = 0
+		}
+
+		if (readyQueue.size() == 1 && readyQueue.get(0).burstTime == 0) {
+			System.out.print(readyQueue.get(0).progressBar + " Done\n");
+			finishedQueue.add(readyQueue.remove(0)); // Move the finished process to a new queue
+			openCSV.collectiveQueue.remove(0);       // Improve efficiency of searches by removing processes with no burst time remaining
+			openCSV.currentTime++;		
+			openCSV.printQueues();
 		}
 		//Print out some of the averages for the FCFS algorithm
-		//super.print("FCFS");
+		//super.print("FCFS");	
 	}
 }
