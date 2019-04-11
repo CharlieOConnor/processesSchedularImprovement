@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class openCSV {
+	
+	static int quantumCounter = RR.QUANTUM;
 
 	// To iterate through all the processes and check if any new arrival times match the current time
 	public static List<Process> collectiveQueue = new ArrayList<Process>(); 
@@ -20,11 +22,7 @@ public class openCSV {
 
 	// To hold how much time has passed in the system
 	static int currentTime = 0;
-
-	// Collective variables to hold the value of currentTime at which the system should stop executing
-	static int totalBurstTime;
-	static int totalWaitingTime;
-
+	
 	public static void openCSV() throws InterruptedException {
 
 		String fileName = "processesFile.csv";
@@ -40,9 +38,7 @@ public class openCSV {
 				int arrivalTime    = Integer.parseInt(details[1]); 
 				int burstTime      = Integer.parseInt(details[2]);
 				int priority       = Integer.parseInt(details[3]);
-				String progressBar = ""; // Dynamic variable to hold the progress of the process's execution in the CPU
-
-				totalBurstTime += burstTime;
+				String progressBar = ""; // New variable to hold the progress of the process's execution in the CPU
 
 				if (priority == 1) {
 					fcfsQueue.add(new Process(processID, arrivalTime, burstTime, priority, progressBar));
@@ -78,14 +74,14 @@ public class openCSV {
 		RR   rr   = new RR(rrQueue);
 
 		// Loop printing of output every second
-		while(currentTime < totalBurstTime + totalWaitingTime) {
+		while(collectiveQueue.size() != 0) {
 
-			Thread.sleep(1000);
+			Thread.sleep(100);
 			System.out.println("\n\n-----------------------\nSeconds Elapsed: " + currentTime);
 			System.out.println("--------------------------------------------------------------------------");
 			System.out.println("|  Process ID  |  Arrival Time  |  Burst Time  |  Priority  |  Progress  \n");	
 
-			if (currentTime > 0 ) {
+			if (currentTime > 0) {
 
 				for (Process p: collectiveQueue) {
 
@@ -113,19 +109,19 @@ public class openCSV {
 							rrQueue.remove(0);  //Remove the top process from this queue to prevent it being executed twice
 						}
 					}
-
-					// For a process to enter the readyQueue, there must be something in the waitingQueue and the readyQueue must be empty	
-					if(FCFS.waitingQueue.size() != 0 && FCFS.readyQueue.size() == 0) {
-						FCFS.readyQueue.add(FCFS.waitingQueue.remove(0));
-					}
-					
-					if (SJF.waitingQueue.size() != 0 && SJF.readyQueue.size() == 0) {
-						SJF.readyQueue.add(SJF.waitingQueue.remove(0));
-					}
-					
-				    if(RR.waitingQueue.size() != 0 && RR.readyQueue.size() == 0) {
-						RR.readyQueue.add(RR.waitingQueue.remove(0));
-					}
+				}
+				
+				// For a process to enter the readyQueue, there must be something in the waitingQueue and the readyQueue must be empty	
+				if(FCFS.waitingQueue.size() != 0 && FCFS.readyQueue.size() == 0) {
+					FCFS.readyQueue.add(FCFS.waitingQueue.remove(0));
+				}
+				
+				if (SJF.waitingQueue.size() != 0 && SJF.readyQueue.size() == 0) {
+					SJF.readyQueue.add(SJF.waitingQueue.remove(0));
+				}
+				
+			    if(RR.waitingQueue.size() != 0 && RR.readyQueue.size() == 0) {
+					RR.readyQueue.add(RR.waitingQueue.remove(0));
 				}
 
 				try {

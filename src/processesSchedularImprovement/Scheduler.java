@@ -60,10 +60,5 @@ public class Scheduler {
 	{
 		this.avgResponseTime = avgResponseTime;
 	}
-	
-	public int getAmountOfProcesses(List<Process> process)
-	{
-		return process.size();
-	}
 }
 	
