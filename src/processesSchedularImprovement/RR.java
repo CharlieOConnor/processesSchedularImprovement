@@ -79,7 +79,6 @@ public class RR extends Scheduler {
 						p.progressBar += "|";
 						p.burstTime--;
 						openCSV.quantumCounter--;
-						System.out.println(openCSV.quantumCounter);
 						
 						//If there's a process in the waiting queue, swap it with the current process
 						if(waitingQueue.size() != 0 && openCSV.quantumCounter == 0) {     
@@ -95,7 +94,6 @@ public class RR extends Scheduler {
 						p.progressBar += "|";
 						p.burstTime--;
 						openCSV.quantumCounter--;
-						System.out.println(openCSV.quantumCounter);
 						
 						//If there's a process in the waiting queue, swap it with the current process
 						if(waitingQueue.size() != 0 && openCSV.quantumCounter == 0) {     
@@ -112,7 +110,6 @@ public class RR extends Scheduler {
 						p.progressBar += "|";
 						p.burstTime -= p.burstTime;
 						openCSV.quantumCounter--;
-						System.out.println(openCSV.quantumCounter);
 						openCSV.printQueues();
 					}
 				}
@@ -123,7 +120,6 @@ public class RR extends Scheduler {
 					openCSV.collectiveQueue.remove(0);       // Improve efficiency of searches by removing processes with no burst time remaining
 					openCSV.currentTime++;		
 					openCSV.quantumCounter = QUANTUM;
-					System.out.println("\nProcess completed!");
 					openCSV.printQueues();                    
 				}
 			}

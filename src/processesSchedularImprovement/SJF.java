@@ -28,11 +28,19 @@ public class SJF extends Scheduler {
 		waitingQueue.add(readyQueue.remove(0));
 		waitingQueue.sort(Comparator.comparing(Process::getBurstTime));
 		readyQueue.add(temp);
-		System.out.println("Currently executing process swapped via SJF\n");
+		System.out.println("Currently executing process swapped via SJF");
 	}
 
 	// Print out Shortest-Job-First list
 	public void print() throws InterruptedException	{
+		
+		// If the process is completed, move it to the finished queue
+		if(readyQueue.size() == 1 && readyQueue.get(0).burstTime == 0) {	
+			//System.out.print(readyQueue.get(0).progressBar + " Done\n");
+			//System.out.println("\nPROCESS COMPLETED!");
+			finishedQueue.add(readyQueue.remove(0)); // Move the finished process to a new queue	
+			openCSV.collectiveQueue.remove(0);       // Improve efficiency of searches by removing processes with no burst time remaining	                
+		}
 
 		// First print out all the processes with no remaining burst time
 		for (Process p: finishedQueue) {
@@ -48,20 +56,13 @@ public class SJF extends Scheduler {
 				System.out.printf("%9s %15s %15s %13s", p.processID, p.arrivalTime, p.burstTime, p.priority, p.progressBar);
 				System.out.print("          ");
 
-				while(p.burstTime != 0) {
+				if (p.burstTime != 0) {
 					System.out.print(p.progressBar);
 					p.progressBar += "|";
 					openCSV.currentTime++;
 					p.burstTime--;
 					openCSV.printQueues();	
-				}
-
-				if(readyQueue.size() == 1 && readyQueue.get(0).burstTime == 0) {	
-					System.out.print(readyQueue.get(0).progressBar + " Done\n");
-					finishedQueue.add(readyQueue.remove(0)); // Move the finished process to a new queue	
-					openCSV.currentTime++;		                
-					openCSV.printQueues();                    
-				}
+				}                  
 			}
 		}
 	}
