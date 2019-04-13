@@ -9,26 +9,21 @@ public class Process implements Comparator<Process> {
     int burstTime;
 	int priority;
 	
-	int remainingBurstTime;  
     String progressBar;      // --> Additional variables added to the process
+    int waitingTime;
     
-	/*
-	 * Create instance of the process class to hold data on the individual processes
-	 */
-	public Process(int processID, int arrivalTime, int burstTime, int priority, String progressBar)
+    // Create instance of the process class to hold data on the individual processes
+	public Process(int processID, int arrivalTime, int burstTime, int priority, String progressBar, int waitingTime)
 	{
 		this.processID   = processID;
 		this.arrivalTime = arrivalTime;
 		this.burstTime   = burstTime;
 		this.priority    = priority;
 		this.progressBar = progressBar;
+		this.waitingTime = waitingTime;
 	}
 	
-	public int getProcessID()
-	{
-		return processID;
-	}
-	
+	// For sorting of the various queues
 	public int getArrivalTime()
 	{
 		return arrivalTime;

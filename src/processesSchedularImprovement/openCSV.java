@@ -3,14 +3,13 @@ package processesSchedularImprovement;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.io.File;
 import java.io.FileNotFoundException;
 
 public class openCSV extends Scheduler {
 
-	// To iterate through all the processes and check if any new arrival times match the current time
+	// To iterate through all the processes
 	public static List<Process> collectiveQueue = new ArrayList<Process>(); 
 
 	// Separate queues for each priority of process
@@ -18,12 +17,13 @@ public class openCSV extends Scheduler {
 	public static List<Process> sjfQueue  = new ArrayList<Process>();
 	public static List<Process> rrQueue   = new ArrayList<Process>();
 
-	// To hold how much time has passed in the system
+	// To calculate average waiting time
+	static int totalBurstTime;
+	// To keep track of how much time has passed in the system
 	static int currentTime = 0;
-	
 	// To calculate averages at the end of program execution
 	static int numberOfProcesses;
-	
+
 
 	public static void openCSV() throws InterruptedException {
 
@@ -41,21 +41,24 @@ public class openCSV extends Scheduler {
 				int burstTime      = Integer.parseInt(details[2]);
 				int priority       = Integer.parseInt(details[3]);
 				String progressBar = ""; // Dynamic variable to hold the progress of the process's execution in the CPU
+				int waitingTime = 0;
 
 				if (priority == 1) {
-					fcfsQueue.add(new Process(processID, arrivalTime, burstTime, priority, progressBar));
+					fcfsQueue.add(new Process(processID, arrivalTime, burstTime, priority, progressBar, waitingTime));
 				}
 
 				else if (priority == 2) {
-					sjfQueue.add(new Process(processID, arrivalTime, burstTime, priority, progressBar));
+					sjfQueue.add(new Process(processID, arrivalTime, burstTime, priority, progressBar, waitingTime));
 				}
 				else {
-					rrQueue.add(new Process(processID, arrivalTime, burstTime, priority, progressBar));
+					rrQueue.add(new Process(processID, arrivalTime, burstTime, priority, progressBar, waitingTime));
 				}
 
-				collectiveQueue.add(new Process(processID, arrivalTime, burstTime, priority, progressBar));
+				collectiveQueue.add(new Process(processID, arrivalTime, burstTime, priority, progressBar, waitingTime));
 				numberOfProcesses++;
+				totalBurstTime += burstTime;
 			}
+
 			inputStream.close(); // Prevent resource leak
 
 			// Sort each individual queue
@@ -78,41 +81,42 @@ public class openCSV extends Scheduler {
 
 		if (collectiveQueue.size() != 0) {
 
-			Thread.sleep(100);
+			Thread.sleep(50);
 			System.out.println("\n\n-----------------------\nSeconds Elapsed: " + currentTime);
 			System.out.println("--------------------------------------------------------------------------");
 			System.out.println("|  Process ID  |  Arrival Time  |  Burst Time  |  Priority  |  Progress  \n");	
 
 			for (Process p: collectiveQueue) {
 
-				/* For a process to enter the waitingQueue, there must be something in the tempQueue and 
-				 * the arrivalTime of the process must equal currentTime, to prevent overlapping
+				/* For a process to enter the waitingQueue, there must be something in the jobQueue and 
+				 * the arrivalTime of the process must equal currentTime.
 				 */		
 				if (p.arrivalTime == currentTime) {
 
 					if (p.priority == 1) {
-						FCFS.waitingQueue.add(FCFS.tempQueue.remove(0));
-						fcfsQueue.remove(0);  //Remove the top process from this queue to prevent it being executed twice
+						FCFS.readyQueue.add(FCFS.jobQueue.remove(0));
+						fcfsQueue.remove(0);  //Remove the top process from this queue to prevent it being added twice
 					}
 
 					else if (p.priority == 2) {			
-						SJF.waitingQueue.add(SJF.tempQueue.remove(0));
-						sjfQueue.remove(0);  //Remove the top process from this queue to prevent it being executed twice
+						SJF.readyQueue.add(SJF.jobQueue.remove(0));
+						sjfQueue.remove(0);  //Remove the top process from this queue to prevent it being added twice
 
 						// If the new process's burst time < currently executing process's, swap their positions and reorder the waiting queue
-						if (SJF.waitingQueue.size() != 0 && SJF.readyQueue.size() != 0 && SJF.waitingQueue.get(0).burstTime < SJF.readyQueue.get(0).burstTime) {
+						if (SJF.readyQueue.size() > 1 && SJF.readyQueue.get(1).burstTime < SJF.readyQueue.get(0).burstTime) {
 							SJF.sortBySJF();
 						}
 					}
 					else {
-						RR.waitingQueue.add(RR.tempQueue.remove(0));
-						rrQueue.remove(0);  //Remove the top process from this queue to prevent it being executed twice
+						RR.readyQueue.add(RR.jobQueue.remove(0));
+						rrQueue.remove(0);  //Remove the top process from this queue to prevent it being added twice
 					}
 				}
 			}
 
 			if(FCFS.waitingQueue.size() == 0 && SJF.waitingQueue.size() == 0 && RR.waitingQueue.size() == 0 &&
 					FCFS.readyQueue.size() == 0 && SJF.readyQueue.size() == 0 && RR.readyQueue.size() == 0) {
+
 				currentTime++;
 				System.out.printf("\n%40s", "CPU IDLE");
 				printQueues();
@@ -124,23 +128,24 @@ public class openCSV extends Scheduler {
 			System.out.printf("\n%55s","ALL PROCESSES COMPLETED!");
 			System.out.printf("%16s %.1f %1s", "\n\nCPU Utilization: ", cpuUtilization/currentTime, "%");
 			System.out.printf("\n%23s %.1f %12s", "Average Turnaround Time: ", avgTurnaroundTime, "milliseconds");
+			System.out.printf("\n%20s %.1f %12s", "Average Waiting Time: ", avgTurnaroundTime - (totalBurstTime/numberOfProcesses), "milliseconds");	
+			System.out.printf("\n%20s %.1f %12s", "Average Response Time: ", avgResponseTime, "milliseconds\n");
 			System.exit(0);
 		}
 
 		// For a process to enter the readyQueue, there must be something in the waitingQueue and the readyQueue must be empty	
-		if(FCFS.waitingQueue.size() != 0 && FCFS.readyQueue.size() == 0) {
+		if(FCFS.waitingQueue.size() != 0) {
 			FCFS.readyQueue.add(FCFS.waitingQueue.remove(0));
 		}
 
-		if (SJF.waitingQueue.size() != 0 && SJF.readyQueue.size() == 0) {
+		if (SJF.waitingQueue.size() != 0) {
 			SJF.readyQueue.add(SJF.waitingQueue.remove(0));
 		}
 
-		if(RR.waitingQueue.size() != 0 && RR.readyQueue.size() == 0) {
+		if(RR.waitingQueue.size() != 0) {
 			RR.readyQueue.add(RR.waitingQueue.remove(0));
 		}
 
-		//try {
 		if (FCFS.readyQueue.size() != 0 || FCFS.finishedQueue.size() != 0 || 
 				SJF.readyQueue.size() != 0 || SJF.finishedQueue.size() != 0  || 
 				RR.readyQueue.size()  != 0 || RR.finishedQueue.size() != 0) {
@@ -150,10 +155,5 @@ public class openCSV extends Scheduler {
 			rr.print();
 			printQueues();
 		}
-		//}
-
-		//catch (ConcurrentModificationException e) {
-		//System.out.print("");
-		//}
 	}
 }
