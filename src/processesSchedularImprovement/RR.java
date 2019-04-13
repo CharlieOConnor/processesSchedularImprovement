@@ -14,6 +14,9 @@ public class RR extends Scheduler {
 
 	// The time slice/quantum that Round Robin processes should execute for in the CPU
 	static final int QUANTUM = 2;
+	
+	// Temp variable for the quantum.
+	static int quantumCounter = QUANTUM;
 
 
 	public RR(List<Process> process) {
@@ -31,15 +34,25 @@ public class RR extends Scheduler {
 		waitingQueue.add(readyQueue.remove(0));
 		readyQueue.add(temp);
 		
-		System.out.print("\nQuantum elapsed. Swapping executing processes");
+		System.out.print("\n\nQUANTUM ELAPSED. SWAPPING EXECUTING PROCESSES.");
 	}
 
 	// Print out Round Robin list
 	public void print() throws InterruptedException {   
 		
-		if(openCSV.quantumCounter == 0)
+		if(readyQueue.size() == 1 && readyQueue.get(0).burstTime == 0) {	
+			//System.out.print(readyQueue.get(0).progressBar + " Done\n");
+			finishedQueue.add(readyQueue.remove(0)); // Move the finished process to a new queue	
+			openCSV.collectiveQueue.remove(0);       // Improve efficiency of searches by removing processes with no burst time remaining
+			avgTurnaroundTime += (openCSV.currentTime - finishedQueue.get(0).arrivalTime)/openCSV.numberOfProcesses; 
+			openCSV.currentTime++;		
+			quantumCounter = QUANTUM;
+			//openCSV.printQueues();                    
+		}
+		
+		if(quantumCounter == 0)
 		{
-			openCSV.quantumCounter = QUANTUM;
+			quantumCounter = QUANTUM;
 		}
 		
 		// Print out all processes with no remaining burst time
@@ -58,32 +71,32 @@ public class RR extends Scheduler {
 
 				while(p.burstTime != 0) {
 
-					//					if (p.burstTime > 1) {
-					//
-					//						//for (Process p1: openCSV.collectiveQueue) {
-					//
-					//							//If a higher priority arriving process would occur before the quantum is up, increment as much of the quantum as you can
-					//							if(p.burstTime > 1 && openCSV.collectiveQueue.get(0).getArrivalTime() == openCSV.currentTime +1 && openCSV.collectiveQueue.get(0).getPriority() < 3) {
-					//								p.progressBar += "|";
-					//								System.out.print(p.progressBar);
-					//								p.burstTime--;
-					//								openCSV.currentTime++;
-					//								openCSV.printQueues();
-					//							}
-					//						//  }
-					//						}
+						//for (Process p1: openCSV.collectiveQueue) {
+
+						//If a higher priority arriving process would occur before the quantum is up, increment as much of the quantum as you can
+						if(p.burstTime > 1 && openCSV.collectiveQueue.get(1).getArrivalTime() == openCSV.currentTime +1 && openCSV.collectiveQueue.get(1).getPriority() < 3) {
+							p.progressBar += "|";
+							System.out.print(p.progressBar);
+							System.out.print("\n\nHIGHER PRIORITY PROCESS DETECTED. SWAPPING EXECUTING PROCESS.");
+							p.burstTime--;
+							openCSV.currentTime++;
+							cpuUtilization += 100;
+							openCSV.printQueues();
+						}
+						//  }
 
 					if (p.burstTime > QUANTUM) {
 						System.out.print(p.progressBar);
 					    openCSV.currentTime++;
 						p.progressBar += "|";
 						p.burstTime--;
-						openCSV.quantumCounter--;
+						quantumCounter--;
+						cpuUtilization += 100;
 						
 						//If there's a process in the waiting queue, swap it with the current process
-						if(waitingQueue.size() != 0 && openCSV.quantumCounter == 0) {     
+						if(waitingQueue.size() != 0 && quantumCounter == 0) {     
 							swapProcesses();
-							openCSV.quantumCounter = QUANTUM;
+							quantumCounter = QUANTUM;
 						}
 						openCSV.printQueues();	
 					}
@@ -93,12 +106,13 @@ public class RR extends Scheduler {
 							openCSV.currentTime++;
 						p.progressBar += "|";
 						p.burstTime--;
-						openCSV.quantumCounter--;
+						quantumCounter--;
+						cpuUtilization += 100;
 						
 						//If there's a process in the waiting queue, swap it with the current process
-						if(waitingQueue.size() != 0 && openCSV.quantumCounter == 0) {     
+						if(waitingQueue.size() != 0 && quantumCounter == 0) {     
 							swapProcesses();
-							openCSV.quantumCounter = QUANTUM;
+							quantumCounter = QUANTUM;
 						}
 						openCSV.printQueues();
 					}
@@ -109,18 +123,10 @@ public class RR extends Scheduler {
 						openCSV.currentTime += p.burstTime;
 						p.progressBar += "|";
 						p.burstTime -= p.burstTime;
-						openCSV.quantumCounter--;
-						openCSV.printQueues();
+						quantumCounter--;
+						cpuUtilization += 100;
+						//openCSV.printQueues();
 					}
-				}
-
-				if(readyQueue.size() == 1 && readyQueue.get(0).burstTime == 0) {	
-					System.out.print(readyQueue.get(0).progressBar + " Done\n");
-					finishedQueue.add(readyQueue.remove(0)); // Move the finished process to a new queue	
-					openCSV.collectiveQueue.remove(0);       // Improve efficiency of searches by removing processes with no burst time remaining
-					openCSV.currentTime++;		
-					openCSV.quantumCounter = QUANTUM;
-					openCSV.printQueues();                    
 				}
 			}
 		}

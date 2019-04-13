@@ -39,7 +39,9 @@ public class SJF extends Scheduler {
 			//System.out.print(readyQueue.get(0).progressBar + " Done\n");
 			//System.out.println("\nPROCESS COMPLETED!");
 			finishedQueue.add(readyQueue.remove(0)); // Move the finished process to a new queue	
-			openCSV.collectiveQueue.remove(0);       // Improve efficiency of searches by removing processes with no burst time remaining	                
+			openCSV.collectiveQueue.remove(0);       // Improve efficiency of searches by removing processes with no burst time remaining	
+			avgTurnaroundTime += (openCSV.currentTime - finishedQueue.get(0).arrivalTime)/openCSV.numberOfProcesses;
+			openCSV.currentTime++;
 		}
 
 		// First print out all the processes with no remaining burst time
@@ -61,8 +63,10 @@ public class SJF extends Scheduler {
 					p.progressBar += "|";
 					openCSV.currentTime++;
 					p.burstTime--;
-					openCSV.printQueues();	
-				}                  
+					//openCSV.printQueues();	
+				}  
+				
+				cpuUtilization += 100;
 			}
 		}
 	}

@@ -1,64 +1,12 @@
 package processesSchedularImprovement;
 
-import java.util.List;
-
 public class Scheduler {
 
-	private double cpuUtilization    = 0;
-	private double throughput        = 0;
-	private double avgTurnaroundTime = 0;
-	private double avgWaitingTime    = 0;
-	private double avgResponseTime   = 0;
+	protected static double cpuUtilization;
+	protected static double throughput;
+	protected static double avgTurnaroundTime;
+	protected static double avgWaitingTime;
+	protected static double avgResponseTime;
 	
-
-	public double getCpuUtilization()
-	{
-		return cpuUtilization;
-	}
-	
-	public void setCpuUtilization(double cpuUtilization)
-	{
-		this.cpuUtilization = cpuUtilization;
-	}
-	
-	public double getThroughput()
-	{
-		return throughput;
-	}
-	
-	public void setThroughput(double throughput)
-	{
-		this.throughput = throughput;
-	}
-	
-	public double getAvgTurnaroundTime()
-	{
-		return avgTurnaroundTime;
-	}
-	
-	public void setAvgTurnaroundTime(double turnaroundTime)
-	{
-		this.avgTurnaroundTime = avgTurnaroundTime;
-	}	
-	
-	public double getAvgWaitingTime()
-	{
-		return avgWaitingTime;
-	}
-	
-	public void setAvgWaitingTime(double waitingTime)
-	{
-		this.avgWaitingTime = avgWaitingTime;
-	}
-	
-	public double getAvgResponseTime()
-	{
-		return avgResponseTime;
-	}
-	
-	public void setAvgResponseTime(double responsetime)
-	{
-		this.avgResponseTime = avgResponseTime;
-	}
 }
 	

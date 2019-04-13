@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class FCFS {
+public class FCFS extends Scheduler {
 
 	// Multiple queues depending on the arrival time and remaining burst time of each process
 	public static ArrayList<Process> tempQueue     = new ArrayList<Process>();
@@ -30,9 +30,12 @@ public class FCFS {
 			//System.out.print(readyQueue.get(0).progressBar + " Done\n");
 			//System.out.println("\nPROCESS COMPLETED!");
 			finishedQueue.add(readyQueue.remove(0)); // Move the finished process to a new queue
-			openCSV.collectiveQueue.remove(0);       // Improve efficiency of searches by removing processes with no burst time remaining		
+			openCSV.collectiveQueue.remove(0);       // Improve efficiency of searches by removing processes with no burst time remaining
+			avgTurnaroundTime += (openCSV.currentTime - finishedQueue.get(0).arrivalTime)/openCSV.numberOfProcesses;
+			openCSV.currentTime++;
+			
 		}
-
+		
 		// First print out all the processes with no remaining burst time
 		for (Process p: finishedQueue) {
 			System.out.printf("%9s %15s %15s %13s", p.processID, p.arrivalTime, p.burstTime, p.priority, p.progressBar);
@@ -50,8 +53,10 @@ public class FCFS {
 				p.progressBar += "|";
 				openCSV.currentTime++;
 				p.burstTime--;
-				//.printQueues();					    		    
+				//openCSV.printQueues();					    		    
 			}
+			
+			cpuUtilization += 100;
 		}
 		//Print out some of the averages for the FCFS algorithm
 		//super.print("FCFS");	

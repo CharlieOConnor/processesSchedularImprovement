@@ -8,9 +8,7 @@ import java.util.List;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-public class openCSV {
-
-	static int quantumCounter = RR.QUANTUM;
+public class openCSV extends Scheduler {
 
 	// To iterate through all the processes and check if any new arrival times match the current time
 	public static List<Process> collectiveQueue = new ArrayList<Process>(); 
@@ -21,7 +19,11 @@ public class openCSV {
 	public static List<Process> rrQueue   = new ArrayList<Process>();
 
 	// To hold how much time has passed in the system
-	static int currentTime = 1;
+	static int currentTime = 0;
+	
+	// To calculate averages at the end of program execution
+	static int numberOfProcesses;
+	
 
 	public static void openCSV() throws InterruptedException {
 
@@ -52,6 +54,7 @@ public class openCSV {
 				}
 
 				collectiveQueue.add(new Process(processID, arrivalTime, burstTime, priority, progressBar));
+				numberOfProcesses++;
 			}
 			inputStream.close(); // Prevent resource leak
 
@@ -107,13 +110,21 @@ public class openCSV {
 					}
 				}
 			}
-			
+
 			if(FCFS.waitingQueue.size() == 0 && SJF.waitingQueue.size() == 0 && RR.waitingQueue.size() == 0 &&
-			   FCFS.readyQueue.size() == 0 && SJF.readyQueue.size() == 0 && RR.readyQueue.size() == 0) {
+					FCFS.readyQueue.size() == 0 && SJF.readyQueue.size() == 0 && RR.readyQueue.size() == 0) {
 				currentTime++;
-				System.out.print("CPU IDLE");
+				System.out.printf("\n%40s", "CPU IDLE");
 				printQueues();
 			}
+		}
+
+		// End the execution of the program
+		if(collectiveQueue.size() == 0) {
+			System.out.printf("\n%55s","ALL PROCESSES COMPLETED!");
+			System.out.printf("%16s %.1f %1s", "\n\nCPU Utilization: ", cpuUtilization/currentTime, "%");
+			System.out.printf("\n%23s %.1f %12s", "Average Turnaround Time: ", avgTurnaroundTime, "milliseconds");
+			System.exit(0);
 		}
 
 		// For a process to enter the readyQueue, there must be something in the waitingQueue and the readyQueue must be empty	
@@ -130,25 +141,19 @@ public class openCSV {
 		}
 
 		//try {
-			if (FCFS.readyQueue.size() != 0 || FCFS.finishedQueue.size() != 0 || 
-					SJF.readyQueue.size() != 0 || SJF.finishedQueue.size() != 0  || 
-					RR.readyQueue.size()  != 0 || RR.finishedQueue.size() != 0) {
-				
-				if(collectiveQueue.size() == 0) {
-					System.out.println("\nALL PROCESSES COMPLETED!");
-					System.exit(0);
-				}
+		if (FCFS.readyQueue.size() != 0 || FCFS.finishedQueue.size() != 0 || 
+				SJF.readyQueue.size() != 0 || SJF.finishedQueue.size() != 0  || 
+				RR.readyQueue.size()  != 0 || RR.finishedQueue.size() != 0) {
 
-				fcfs.print();
-				System.out.println("\n");
-				sjf.print();
-				rr.print();
-				printQueues();
-			}
+			fcfs.print(); System.out.println();
+			sjf.print();  System.out.println();
+			rr.print();
+			printQueues();
+		}
 		//}
-		
+
 		//catch (ConcurrentModificationException e) {
-			//System.out.print("");
+		//System.out.print("");
 		//}
 	}
 }
