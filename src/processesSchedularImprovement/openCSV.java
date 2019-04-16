@@ -59,8 +59,10 @@ public class openCSV extends Scheduler {
 				totalBurstTime += burstTime;
 			}
 
+			// Set up the waiting time for the aging algorithm
+			avgBurstTime = totalBurstTime/numberOfProcesses;
 			inputStream.close(); // Prevent resource leak
-
+			
 			// Sort each individual queue
 			collectiveQueue.sort(Comparator.comparing(Process::getArrivalTime));	
 			fcfsQueue.sort(Comparator.comparing(Process::getArrivalTime));
@@ -127,9 +129,9 @@ public class openCSV extends Scheduler {
 		if(collectiveQueue.size() == 0) {
 			System.out.printf("\n%55s","ALL PROCESSES COMPLETED!");
 			System.out.printf("%16s %.1f %1s", "\n\nCPU Utilization: ", cpuUtilization/currentTime, "%");
-			System.out.printf("\n%23s %.1f %12s", "Average Turnaround Time: ", avgTurnaroundTime, "milliseconds");
-			System.out.printf("\n%20s %.1f %12s", "Average Waiting Time: ", avgTurnaroundTime - (totalBurstTime/numberOfProcesses), "milliseconds");	
-			System.out.printf("\n%20s %.1f %12s", "Average Response Time: ", avgResponseTime, "milliseconds\n");
+			System.out.printf("\n%23s %.1f %12s", "Average Turnaround Time: ", avgTurnaroundTime/(double)numberOfProcesses, "milliseconds");
+			System.out.printf("\n%20s %.1f %12s", "Average Waiting Time: ", avgWaitingTime/(double)numberOfProcesses, "milliseconds");	
+			System.out.printf("\n%20s %.1f %12s", "Average Response Time: ", avgResponseTime/(double)numberOfProcesses, "milliseconds\n");
 			System.exit(0);
 		}
 

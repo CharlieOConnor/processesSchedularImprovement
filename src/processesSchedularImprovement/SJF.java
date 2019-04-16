@@ -12,7 +12,7 @@ public class SJF extends Scheduler {
 	public static ArrayList<Process> readyQueue     = new ArrayList<Process>();
 	public static ArrayList<Process> finishedQueue  = new ArrayList<Process>();
 
-
+	// Sort all processes entered into this queue from the CSV file by arrival time
 	public SJF(List<Process> process) {
 
 		jobQueue = new ArrayList<Process>(process);		
@@ -34,31 +34,36 @@ public class SJF extends Scheduler {
 	public void print() throws InterruptedException	{
 
 		// If the process is completed, move it to the finished queue
-		if(readyQueue.size() != 0 && readyQueue.get(0).burstTime == 0) {	
+		if(readyQueue.size() != 0 && readyQueue.get(0).burstTime == 0) {
+			
+			avgTurnaroundTime += openCSV.currentTime - readyQueue.get(0).arrivalTime; 	
+			avgWaitingTime += readyQueue.get(0).waitingTime;
 			finishedQueue.add(readyQueue.remove(0)); // Move the finished process to a new queue	
 			openCSV.collectiveQueue.remove(0);       // Improve efficiency of searches by removing processes with no burst time remaining	
-			avgTurnaroundTime += (openCSV.currentTime - finishedQueue.get(0).arrivalTime)/openCSV.numberOfProcesses;
 		}
 
 		// Print out all the processes with no remaining burst time
 		for (Process p: finishedQueue) {
+			
 			System.out.printf("%9s %15s %15s %13s", p.processID, p.arrivalTime, p.burstTime, p.priority, p.progressBar);
 			System.out.print("          ");
-			System.out.print("Done\n");
+			System.out.print(p.progressBar + " Done\n");
 		}
 
 		// Don't execute any processes in this ready queue unless the FCFS ready queue is empty
 		if(FCFS.readyQueue.size() == 0 && readyQueue.size() != 0) {
+			
 			Process p = readyQueue.get(0);
 			System.out.printf("%9s %15s %15s %13s", p.processID, p.arrivalTime, p.burstTime, p.priority, p.progressBar);
 			System.out.print("          ");
 
 			if (p.burstTime != 0) {
+				
 				System.out.print(p.progressBar);
 				p.progressBar += "|";
 
 				if(p.progressBar.length() == 1) {
-					avgResponseTime += openCSV.currentTime/openCSV.numberOfProcesses;
+					avgResponseTime += openCSV.currentTime - p.arrivalTime;
 				}
 
 				openCSV.currentTime++;
@@ -67,34 +72,34 @@ public class SJF extends Scheduler {
 
 			cpuUtilization += 100;
 		}
-		
-        //------------------------------
+
+		//------------------------------
 		//        AGING SOLUTION
 		//------------------------------
-		
+
 		// If there's more than one process in the ready queue, increment the waiting
 		//  times of all the processes not currently being executed
-		// If a process is waiting for 10 seconds to be executed, increase its' priority
-		if(readyQueue.size() > 1) {
+		
+		// If a process is waiting for more than the average burst time, increase its' priority
+		if(readyQueue.size() > 1 || FCFS.readyQueue.size() != 0) {
+			
 			for (int i = 1; i < readyQueue.size(); i++) {
 				readyQueue.get(i).waitingTime++;
+				avgWaitingTime++;
 			}
 
 			for(int i = 1; i < readyQueue.size(); i++) {
-				if(readyQueue.get(i).waitingTime == 10) {
-					avgWaitingTime += readyQueue.get(i).waitingTime;
+				
+				if(readyQueue.get(i).waitingTime >= avgBurstTime) {
+					
+					readyQueue.get(i).waitingTime = 0;
 					readyQueue.get(i).priority--;
 					openCSV.collectiveQueue.get(i).priority--;
-					readyQueue.get(i).waitingTime = 0;
+					System.out.println("\n\nWARNING: WAITING TIME EXCEEDED. PROCESS (" + readyQueue.get(i).processID + ") PRIORITY INCREASED FROM 2 -> 1.");
 					FCFS.readyQueue.add(readyQueue.remove(i));
-					System.out.println("\n\nWAITING TIME EXCEEDED. RR PROCESS'S PRIORITY INCREASED.");
 
 				}
 			}
-		}
-
-		if(finishedQueue.size() == 0 && FCFS.readyQueue.size() != 0) {
-			System.out.println("\nSJF readyQueue on hold.");
 		}
 	}
 }

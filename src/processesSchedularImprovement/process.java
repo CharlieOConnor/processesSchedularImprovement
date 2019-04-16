@@ -9,8 +9,8 @@ public class Process implements Comparator<Process> {
     int burstTime;
 	int priority;
 	
-    String progressBar;      // --> Additional variables added to the process
-    int waitingTime;
+    String progressBar;      // --> Keep track of the execution of the process
+    int waitingTime;         // --> Keep track of a process's waiting time
     
     // Create instance of the process class to hold data on the individual processes
 	public Process(int processID, int arrivalTime, int burstTime, int priority, String progressBar, int waitingTime)
@@ -39,7 +39,7 @@ public class Process implements Comparator<Process> {
 		return priority;
 	}
 
-	// Implement comparator in order to sort the processes in the SJF list
+	// Implement comparator in order to sort the processes in the SJF queue
 	@Override
 	public int compare(Process arg0, Process arg1) {
 		if (arg0.getBurstTime() < arg1.getBurstTime()) {		
